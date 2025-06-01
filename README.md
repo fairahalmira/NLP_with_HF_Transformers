@@ -17,13 +17,13 @@
 ```
 # TODO :
 classifier = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
-classifier("I am doing this on a regular basis, baking a cake in the morning!")
+classifier("I don't like vegetables because they taste bad.")
 ```
 
 Result : 
 
 ```
-[{'label': 'POSITIVE', 'score': 0.9959210157394409}]
+[{'label': 'NEGATIVE', 'score': 0.9988358616828918}]
 ```
 
 Analysis on example 1 : 
@@ -37,17 +37,17 @@ The sentiment analysis classifier accurately detects the positive tone in the gi
 # TODO :
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 classifier(
-    "Cats are beloved domestic companions known for their independence and agility. These fascinating creatures exhibit a range of behaviors, from playful pouncing to peaceful purring. With their sleek fur, captivating eyes, and mysterious charm, cats have captivated humans for centuries, becoming cherished members of countless households worldwide.",
-    candidate_labels=["science", "pet", "machine learning"],
+    "Python is a versatile programming language widely used for web development, data analysis, machine learning, and automation tasks.",
+    candidate_labels=["programming", "data science", "robotics"],
 )
 ```
 
 Result : 
 
 ```
-{'sequence': 'Cats are beloved domestic companions known for their independence and agility. These fascinating creatures exhibit a range of behaviors, from playful pouncing to peaceful purring. With their sleek fur, captivating eyes, and mysterious charm, cats have captivated humans for centuries, becoming cherished members of countless households worldwide.',
- 'labels': ['pet', 'machine learning', 'science'],
- 'scores': [0.9174826145172119, 0.048576705157756805, 0.03394068405032158]}
+{'sequence': 'Python is a versatile programming language widely used for web development, data analysis, machine learning, and automation tasks.',
+ 'labels': ['programming', 'data science', 'robotics'],
+ 'scores': [0.8912290930747986, 0.09571515023708344, 0.013055806048214436]}
 ```
 
 Analysis on example 2 : 
@@ -58,9 +58,10 @@ The zero-shot classifier correctly identifies "pet" as the most relevant label, 
 
 ```
 # TODO :
+
 generator = pipeline("text-generation", model="distilgpt2") # or change to gpt-2
 generator(
-    "This cooking will make you",
+    "running away from reality will make you",
     max_length=30, # you can change this
     num_return_sequences=2, # and this too
 )
@@ -69,8 +70,8 @@ generator(
 Result : 
 
 ```
-[{'generated_text': 'This cooking will make you even richer. I used to work too little, I thought it was kind of ridiculous to take it that far. I was'},
- {'generated_text': 'This cooking will make you feel alive for hours every afternoon. It would also help keep your children in school throughout the day.\n\n\nOne of'}]
+[{'generated_text': 'running away from reality will make you cry.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'},
+ {'generated_text': 'running away from reality will make you think twice.'}]
 ```
 
 Analysis on example 3 : 
@@ -79,28 +80,28 @@ The text generation model produces coherent and imaginative continuations of a c
 
 ```
 unmasker = pipeline("fill-mask", "distilroberta-base")
-unmasker("This person is the one who <mask> my purse", top_k=4)
+unmasker("I am very happy today <mask> without any assignments.", top_k=4)
 ```
 
 Result : 
 
 ```
-[{'score': 0.8569591641426086,
-  'token': 8268,
-  'token_str': ' stole',
-  'sequence': 'This person is the one who stole my purse'},
- {'score': 0.030922001227736473,
-  'token': 25702,
-  'token_str': ' snatched',
-  'sequence': 'This person is the one who snatched my purse'},
- {'score': 0.02246157079935074,
-  'token': 12297,
-  'token_str': ' steals',
-  'sequence': 'This person is the one who steals my purse'},
- {'score': 0.01934182271361351,
-  'token': 2263,
-  'token_str': ' broke',
-  'sequence': 'This person is the one who broke my purse'}]
+[{'score': 0.27781352400779724,
+  'token': 447,
+  'token_str': ' working',
+  'sequence': 'I am very happy today working without any assignments.'},
+ {'score': 0.16760730743408203,
+  'token': 6,
+  'token_str': ',',
+  'sequence': 'I am very happy today, without any assignments.'},
+ {'score': 0.08466323465108871,
+  'token': 8,
+  'token_str': ' and',
+  'sequence': 'I am very happy today and without any assignments.'},
+ {'score': 0.017915353178977966,
+  'token': 1937,
+  'token_str': ' alone',
+  'sequence': 'I am very happy today alone without any assignments.'}]
 ```
 
 Analysis on example 3.5 : 
@@ -112,32 +113,32 @@ The fill-mask pipeline accurately infers masked words based on context. The top 
 ```
 # TODO :
 ner = pipeline("ner", model="dbmdz/bert-large-cased-finetuned-conll03-english", grouped_entities=True)
-ner("My name is Arifian, I am an AI Technical Mentor at Infinite Learning, Batam Island")
+ner("My name is Fairah Almira, I am a student at the Padang Institute of Technology who is currently studying Natural Language Processing with Hugging Face Transformers.")
 ```
 
 Result : 
 
 ```
 [{'entity_group': 'PER',
-  'score': np.float32(0.9978566),
-  'word': 'Arifian',
+  'score': np.float32(0.99881804),
+  'word': 'Fairah Almira',
   'start': 11,
-  'end': 18},
+  'end': 24},
  {'entity_group': 'ORG',
-  'score': np.float32(0.7615841),
-  'word': 'AI',
-  'start': 28,
-  'end': 30},
+  'score': np.float32(0.99738437),
+  'word': 'Padang Institute of Technology',
+  'start': 48,
+  'end': 78},
+ {'entity_group': 'MISC',
+  'score': np.float32(0.7244507),
+  'word': 'Natural Language Processing',
+  'start': 105,
+  'end': 132},
  {'entity_group': 'ORG',
-  'score': np.float32(0.9623977),
-  'word': 'Infinite Learning',
-  'start': 51,
-  'end': 68},
- {'entity_group': 'LOC',
-  'score': np.float32(0.9913697),
-  'word': 'Batam Island',
-  'start': 70,
-  'end': 82}]
+  'score': np.float32(0.9604106),
+  'word': 'Hugging Face Transformers',
+  'start': 138,
+  'end': 163}]
 ```
 
 Analysis on example 4 : 
@@ -149,15 +150,18 @@ The named entity recognizer successfully identifies personal, organizational, an
 ```
 # TODO :
 qa_model = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
-question = "What four-legged animal sometimes comes inside the house and likes to sleep?"
-context = "Four-legged animal that sometimes comes inside the house and likes to sleep is a cat"
+question = "What are the 4 main areas in knowledge areas?"
+context = "In project management, there are four main areas in the knowledge area that serve as important foundations for achieving project success. These four areas are scope, time, cost, and quality."
 qa_model(question = question, context = context)
 ```
 
 Result : 
 
 ```
-{'score': 0.6314472556114197, 'start': 79, 'end': 84, 'answer': 'a cat'}
+{'score': 0.9668430089950562,
+ 'start': 159,
+ 'end': 189,
+ 'answer': 'scope, time, cost, and quality'}
 ```
 
 Analysis on example 5 : 
@@ -171,7 +175,13 @@ The question-answering model correctly extracts the most relevant phrase "a cat"
 summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
 summarizer(
     """
-Machine Learning adalah cabang dari Kecerdasan Buatan yang memungkinkan sistem komputer untuk belajar dari data tanpa diprogram secara eksplisit. 1  Melalui algoritma, mesin dapat mengidentifikasi pola, membuat prediksi, dan meningkatkan kinerja seiring waktu. Penerapannya luas, mulai dari rekomendasi produk hingga diagnosis medis, mengubah cara kita berinteraksi dengan teknologi. 
+UI/UX merupakan dua komponen penting dalam dunia desain digital. UI (User Interface) adalah aspek visual dari aplikasi atau website, mencakup tampilan, warna, ikon, dan tata letak yang digunakan pengguna. Tujuannya adalah menciptakan desain yang menarik dan mudah dimengerti.
+
+Di sisi lain, UX (User Experience) berkaitan dengan bagaimana perasaan dan pengalaman pengguna saat menggunakan produk tersebut. UX menekankan kenyamanan, efisiensi, dan kepuasan dalam proses interaksi, mulai dari navigasi hingga kecepatan akses fitur.
+
+UI dan UX tidak dapat dipisahkan karena saling melengkapi. Desain yang indah tanpa pengalaman pengguna yang baik bisa membuat orang frustrasi. Begitu pula, sistem yang fungsional tetapi tampilannya membingungkan akan sulit digunakan.
+
+Dengan perancangan UI/UX yang optimal, sebuah produk digital bisa menjadi lebih intuitif, menyenangkan, dan meningkatkan loyalitas pengguna dalam jangka panjang. Inilah kunci sukses dalam era teknologi saat ini.
 """
 )
 ```
@@ -179,8 +189,7 @@ Machine Learning adalah cabang dari Kecerdasan Buatan yang memungkinkan sistem k
 Result : 
 
 ```
-[{'summary_text': ' Machine Learning adalah cabang dari Kecerdasan Buatan yang memungkinkan komputer untuk belajar dari data tanpa diprogram secara eksplisit . Melalui algoritma, mesin dapat mengidentifikasi pola, membuat prediksi, dan meningkatkan kinerja seiring waktu .'}]
-
+[{'summary_text': ' UI (User Interface) adalah aspek visual dari aplikasi atau website, mencakup tampilan, warna, ikon, dan tata letak yang digunakan . UX menekankan kenyamanan, efisiensi, dan kepuasan dalam proses interaksi, mulai dari navigasi hingga kecepatan akses fitur .'}]
 ```
 
 Analysis on example 6 :
@@ -192,13 +201,13 @@ The summarization pipeline effectively condenses the core idea of the paragraph 
 ```
 # TODO :
 translator_id = pipeline("translation", model="Helsinki-NLP/opus-mt-id-fr")
-translator_id("Hari ini masak apa, chef?")
+translator_id("Hari ini di kota Padang sangat panas.")
 ```
 
 Result : 
 
 ```
-[{'translation_text': "Qu'est-ce qu'on fait aujourd'hui, chef ?"}]
+[{'translation_text': "Aujourd'hui, dans la ville de Pakng, il fait très chaud."}]
 
 ```
 
